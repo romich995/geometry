@@ -5,12 +5,6 @@
 pip install -r ./requirements.txt 
 ```
 
-### Пример добавления точки c координатами 3 4.
-
-```shell
-python ./service.py add point 3 4
-```
-
 
 ### Пример добавления фигур.
 
