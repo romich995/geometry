@@ -1,0 +1,10 @@
+{
+  "square":
+  {
+    "1":
+    {
+      "left_top":
+      {"x": 1.0,
+        "y": 2.0},
+      "side_length": 5.0,
+      "angle": 4.0}}, "rectangle": {"1": {"left_top": {"x": 1.0, "y": 2.0}, "right_length": 3.0, "bottom_length": 4.0, "angle": 5.0}}, "ellipse": {}}

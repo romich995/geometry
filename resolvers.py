@@ -40,3 +40,9 @@ class DownloadResolver(Resolver):
     def run(self):
         shutil.copy("./tiny.db", self.parser.file_path)
 
+class UploadResolver(Resolver):
+    cmd = 'upload'
+
+    def run(self):
+        for service in self.services_cls:
+            service(self.parser).upload()

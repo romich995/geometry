@@ -5,7 +5,7 @@ import tinydb
 from tinydb import Query
 
 from geometry import Point, Segment, Circle, Square, Rectangle, Ellipse
-from resolvers import AddResolver, DeleteResolver, ShowResolver, DownloadResolver
+from resolvers import AddResolver, DeleteResolver, ShowResolver, DownloadResolver, UploadResolver
 
 
 def add_point_arguments(parser):
@@ -115,6 +115,15 @@ class FigureService:
         self.parser = parser
         self.storage = db.table(self.figure)
 
+    def upload(self):
+        from_db = tinydb.TinyDB(self.parser.file_path)
+        try:
+            from_table = from_db.table(self.figure)
+            for obj in from_table.all():
+                self.storage.insert(dict(obj))
+        finally:
+            from_db.close()
+
 
 class PointService(FigureService):
     figure = 'point'
@@ -138,8 +147,8 @@ class PointService(FigureService):
         print("Points:",)
         print('\n'.join(str(Point.deserialize(point)) for point in self.storage.all()))
 
-    def upload(self):
-        pass
+
+
 
 class SegmentService(FigureService):
     figure = 'segment'
@@ -287,4 +296,4 @@ CommandExecutor(parse_args,
                     RectangleService,
                     EllipseService
                 ],
-                [AddResolver, DeleteResolver, ShowResolver, DownloadResolver]).run()
+                [AddResolver, DeleteResolver, ShowResolver, DownloadResolver, UploadResolver]).run()
