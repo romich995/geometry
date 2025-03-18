@@ -57,6 +57,7 @@ class Circle(Geometry):
                    dct["radius"])
 
 
+
 class Square(Geometry):
     def __init__(self, left_top: Point, side_length: float, angle: float):
         assert 0 <= angle < 360
@@ -77,3 +78,49 @@ class Square(Geometry):
         return cls(Point.deserialize(dct["left_top"]),
                    dct["side_length"], dct["angle"])
 
+class Rectangle(Geometry):
+    def __init__(self, left_top: Point, right_length: float, bottom_length: float, angle: float):
+        assert 0 <= angle < 360
+        self.left_top = left_top
+        self.right_length = right_length
+        self.bottom_length = bottom_length
+        self.angle = angle
+
+
+    def __str__(self):
+        return f"Rectangle(left_top={self.left_top}, right_length={self.right_length}, bottom_length={self.bottom_length}, angle={self.angle})"
+
+    def serialize(self):
+        return {"left_top": self.left_top.serialize(),
+                "right_length": self.right_length,
+                "bottom_length": self.bottom_length,
+                "angle": self.angle}
+
+    @classmethod
+    def deserialize(cls, dct: dict):
+        return cls(Point.deserialize(dct["left_top"]),
+                   dct["right_length"], dct["bottom_length"], dct["angle"])
+
+
+class Rectangle(Geometry):
+    def __init__(self, left_top: Point, right_length: float, bottom_length: float, angle: float):
+        assert 0 <= angle < 360
+        self.left_top = left_top
+        self.right_length = right_length
+        self.bottom_length = bottom_length
+        self.angle = angle
+
+
+    def __str__(self):
+        return f"Rectangle(left_top={self.left_top}, right_length={self.right_length}, bottom_length={self.bottom_length}, angle={self.angle})"
+
+    def serialize(self):
+        return {"left_top": self.left_top.serialize(),
+                "right_length": self.right_length,
+                "bottom_length": self.bottom_length,
+                "angle": self.angle}
+
+    @classmethod
+    def deserialize(cls, dct: dict):
+        return cls(Point.deserialize(dct["left_top"]),
+                   dct["right_length"], dct["bottom_length"], dct["angle"])

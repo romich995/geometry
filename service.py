@@ -3,7 +3,7 @@ import argparse
 import tinydb
 from tinydb import Query
 
-from geometry import Point, Segment, Circle, Square
+from geometry import Point, Segment, Circle, Square, Rectangle
 from resolvers import AddResolver, DeleteResolver, ShowResolver
 
 
@@ -32,16 +32,19 @@ def add_circle_arguments(parser):
     parser.add_argument("radius", type=float,  help="y coordinate of center")
 
 def add_ellips_arguments(parser):
-    parser.add_argument("center_x", type=float, help="x coordinate of center")
-    parser.add_argument("center_y", type=float, help="y coordinate of center")
-    parser.add_argument("radius_x", type=float,  help="radius by x axis")
-    parser.add_argument("radius_y", type=float,  help="radius by y axis")
+    parser.add_argument("focus_1_x", type=float, help="x coordinate of first focus")
+    parser.add_argument("focus_1_y", type=float, help="y coordinate of first focus")
+    parser.add_argument("focus_2_x", type=float,  help="x coordinate of second focus")
+    parser.add_argument("focus_2_y", type=float,  help="y coordinate of second focus")
+    parser.add_argument("distance", type=float,  help="sum distance from two focus")
+
 
 def add_rectangle_arguments(parser):
     parser.add_argument("left_top_x", type=float, help="x coordinate of left top point")
     parser.add_argument("left_top_y", type=float, help="y coordinate of left top point")
-    parser.add_argument("right_bottom_x", type=float,  help="x coordinate of right bottom point")
-    parser.add_argument("right_bottom_y", type=float,  help="x coordinate of right bottom point")
+    parser.add_argument("right_side_length", type=float,  help="right side length")
+    parser.add_argument("bottom_side_length", type=float,  help="bottom side length")
+    parser.add_argument("angle", type=float, help="angle")
 
 
 db = tinydb.TinyDB('./tiny.db')
@@ -65,6 +68,13 @@ add_circle_arguments(add_circle)
 add_square = add_figure.add_parser("square", help="add new square")
 add_square_arguments(add_square)
 
+add_ellipse = add_figure.add_parser("ellipse", help="add new ellipse")
+add_ellips_arguments(add_ellipse)
+
+add_rectangle = add_figure.add_parser("rectangle", help="add new rectangle")
+add_rectangle_arguments(add_rectangle)
+
+
 show = subparser.add_parser("show", help="show figures")
 
 delete = subparser.add_parser("delete", help="delete figure")
@@ -83,6 +93,11 @@ add_circle_arguments(delete_circle)
 delete_square = delete_figure.add_parser("square", help="delete square")
 add_square_arguments(delete_square)
 
+delete_ellipse = delete_figure.add_parser("ellipse", help="delete ellipse")
+add_ellips_arguments(delete_ellipse)
+
+delete_rectangle = delete_figure.add_parser("rectangle", help="delete rectangle")
+add_rectangle_arguments(delete_rectangle)
 
 parse_args = parser.parse_args()
 
@@ -190,6 +205,33 @@ class SquareService(FigureService):
         print('\n'.join(str(Square.deserialize(square)) for square in self.storage.all()))
 
 
+class RectangleService(FigureService):
+    figure = 'rectangle'
+
+    def add(self):
+        self.storage.insert(
+            Rectangle(
+                Point(self.parser.left_top_x,  self.parser.left_top_y),
+                self.parser.right_side_length,
+                self.parser.bottom_side_length,
+                self.parser.angle
+            ).serialize()
+        )
+
+    def delete(self):
+        self.storage.remove(
+            (Query()["left_top"]["x"] ==  self.parser.left_top_x) &
+            (Query()["left_top"]["y"] ==  self.parser.left_top_y) &
+            (Query()["right_length"] ==  self.parser.right_side_length) &
+            (Query()["bottom_length"] ==  self.parser.bottom_side_length) &
+            (Query()["angle"] ==  self.parser.angle)
+        )
+
+    def show(self):
+        print("Rectangles:", )
+        print('\n'.join(str(Rectangle.deserialize(rectangle)) for rectangle in self.storage.all()))
+
+
 
 
 class CommandExecutor:
@@ -206,5 +248,5 @@ class CommandExecutor:
 
 
 CommandExecutor(parse_args,
-                [PointService, SegmentService, CircleService, SquareService],
+                [PointService, SegmentService, CircleService, SquareService, RectangleService],
                 [AddResolver, DeleteResolver, ShowResolver]).run()
