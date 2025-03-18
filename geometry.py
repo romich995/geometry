@@ -101,26 +101,21 @@ class Rectangle(Geometry):
         return cls(Point.deserialize(dct["left_top"]),
                    dct["right_length"], dct["bottom_length"], dct["angle"])
 
-
-class Rectangle(Geometry):
-    def __init__(self, left_top: Point, right_length: float, bottom_length: float, angle: float):
-        assert 0 <= angle < 360
-        self.left_top = left_top
-        self.right_length = right_length
-        self.bottom_length = bottom_length
-        self.angle = angle
-
+class Ellipse(Geometry):
+    def __init__(self, focus_1: Point, focus_2: Point, distance: float):
+        self.focus_1 = focus_1
+        self.focus_2 = focus_2
+        self.distance = distance
 
     def __str__(self):
-        return f"Rectangle(left_top={self.left_top}, right_length={self.right_length}, bottom_length={self.bottom_length}, angle={self.angle})"
+        return f"Ellipse(focus_1={self.focus_1}, focus_2={self.focus_2}, distance={self.distance})"
 
     def serialize(self):
-        return {"left_top": self.left_top.serialize(),
-                "right_length": self.right_length,
-                "bottom_length": self.bottom_length,
-                "angle": self.angle}
+        return {"focus_1": self.focus_1.serialize(),
+                "focus_2": self.focus_2.serialize(),
+                "distance": self.distance}
 
     @classmethod
     def deserialize(cls, dct: dict):
-        return cls(Point.deserialize(dct["left_top"]),
-                   dct["right_length"], dct["bottom_length"], dct["angle"])
+        return cls(Point.deserialize(dct["focus_1"]), Point.deserialize(dct["focus_2"]),
+                   dct["distance"])

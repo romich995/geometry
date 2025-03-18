@@ -3,7 +3,7 @@ import argparse
 import tinydb
 from tinydb import Query
 
-from geometry import Point, Segment, Circle, Square, Rectangle
+from geometry import Point, Segment, Circle, Square, Rectangle, Ellipse
 from resolvers import AddResolver, DeleteResolver, ShowResolver
 
 
@@ -232,14 +232,36 @@ class RectangleService(FigureService):
         print('\n'.join(str(Rectangle.deserialize(rectangle)) for rectangle in self.storage.all()))
 
 
+class EllipseService(FigureService):
+    figure = 'ellipse'
 
+    def add(self):
+        self.storage.insert(
+            Ellipse(
+                Point(self.parser.focus_1_x,  self.parser.focus_1_y),
+                Point(self.parser.focus_2_x,  self.parser.focus_2_y),
+                self.parser.distance
+            ).serialize()
+        )
+
+    def delete(self):
+        self.storage.remove(
+            (Query()["focus_1"]["x"] == self.parser.focus_1_x) &
+            (Query()["focus_1"]["y"] == self.parser.focus_1_y) &
+            (Query()["focus_2"]["x"] == self.parser.focus_2_x) &
+            (Query()["focus_2"]["y"] == self.parser.focus_2_y) &
+            (Query()["distance"] == self.parser.distance)
+        )
+
+    def show(self):
+        print("Ellipses:", )
+        print('\n'.join(str(Ellipse.deserialize(ellipse)) for ellipse in self.storage.all()))
 
 class CommandExecutor:
     def __init__(self, parser, services_cls, resolvers_cls):
         self.parser = parser
         self.services_cls = services_cls
         self.resolver_cls = resolvers_cls
-
 
     def run(self):
         for resolver in self.resolver_cls:
@@ -248,5 +270,5 @@ class CommandExecutor:
 
 
 CommandExecutor(parse_args,
-                [PointService, SegmentService, CircleService, SquareService, RectangleService],
+                [PointService, SegmentService, CircleService, SquareService, RectangleService, EllipseService],
                 [AddResolver, DeleteResolver, ShowResolver]).run()
