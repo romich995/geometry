@@ -1,10 +1,11 @@
 import argparse
+from pathlib import Path
 
 import tinydb
 from tinydb import Query
 
 from geometry import Point, Segment, Circle, Square, Rectangle, Ellipse
-from resolvers import AddResolver, DeleteResolver, ShowResolver
+from resolvers import AddResolver, DeleteResolver, ShowResolver, DownloadResolver
 
 
 def add_point_arguments(parser):
@@ -99,6 +100,12 @@ add_ellips_arguments(delete_ellipse)
 delete_rectangle = delete_figure.add_parser("rectangle", help="delete rectangle")
 add_rectangle_arguments(delete_rectangle)
 
+download = subparser.add_parser("download", help="download figures")
+download.add_argument("file_path", type=Path, help="file path to download")
+
+upload = subparser.add_parser("upload", help="upload figures")
+upload.add_argument("file_path", type=Path, help="file path to upload")
+
 parse_args = parser.parse_args()
 
 
@@ -131,6 +138,8 @@ class PointService(FigureService):
         print("Points:",)
         print('\n'.join(str(Point.deserialize(point)) for point in self.storage.all()))
 
+    def upload(self):
+        pass
 
 class SegmentService(FigureService):
     figure = 'segment'
@@ -270,5 +279,12 @@ class CommandExecutor:
 
 
 CommandExecutor(parse_args,
-                [PointService, SegmentService, CircleService, SquareService, RectangleService, EllipseService],
-                [AddResolver, DeleteResolver, ShowResolver]).run()
+                [
+                    PointService,
+                    SegmentService,
+                    CircleService,
+                    SquareService,
+                    RectangleService,
+                    EllipseService
+                ],
+                [AddResolver, DeleteResolver, ShowResolver, DownloadResolver]).run()

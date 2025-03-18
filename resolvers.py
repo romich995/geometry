@@ -1,3 +1,7 @@
+import os
+import shutil
+
+
 class Resolver:
     def __init__(self, parser, services_cls):
         self.parser = parser
@@ -28,3 +32,11 @@ class ShowResolver(Resolver):
     def run(self):
         for service in self.services_cls:
             service(self.parser).show()
+
+
+class DownloadResolver(Resolver):
+    cmd = 'download'
+
+    def run(self):
+        shutil.copy("./tiny.db", self.parser.file_path)
+
