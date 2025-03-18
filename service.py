@@ -16,6 +16,7 @@ def add_square_arguments(parser):
     parser.add_argument("left_top_x", type=float, help="x coordinate of left top point")
     parser.add_argument("left_top_y", type=float, help="y coordinate of left top point")
     parser.add_argument("side_length", type=float,  help="side length")
+    parser.add_argument("angle", type=float, help="angle")
 
 
 def add_segment_arguments(parser):
@@ -29,6 +30,19 @@ def add_circle_arguments(parser):
     parser.add_argument("center_x", type=float, help="x coordinate of center")
     parser.add_argument("center_y", type=float, help="y coordinate of center")
     parser.add_argument("radius", type=float,  help="y coordinate of center")
+
+def add_ellips_arguments(parser):
+    parser.add_argument("center_x", type=float, help="x coordinate of center")
+    parser.add_argument("center_y", type=float, help="y coordinate of center")
+    parser.add_argument("radius_x", type=float,  help="radius by x axis")
+    parser.add_argument("radius_y", type=float,  help="radius by y axis")
+
+def add_rectangle_arguments(parser):
+    parser.add_argument("left_top_x", type=float, help="x coordinate of left top point")
+    parser.add_argument("left_top_y", type=float, help="y coordinate of left top point")
+    parser.add_argument("right_bottom_x", type=float,  help="x coordinate of right bottom point")
+    parser.add_argument("right_bottom_y", type=float,  help="x coordinate of right bottom point")
+
 
 db = tinydb.TinyDB('./tiny.db')
 
@@ -86,16 +100,17 @@ class PointService(FigureService):
     def add(self):
         self.storage.insert(
             Point(
-                parse_args.x,
-                parse_args.y
+                self.parser.x,
+                self.parser.y
             ).serialize()
         )
 
     def delete(self):
         self.storage.remove(
-            (Query()["x"] == parse_args.x) &
-            (Query()["y"] == parse_args.y)
+            (Query()["x"] == self.parser.x) &
+            (Query()["y"] == self.parser.y)
         )
+
 
     def show(self):
         print("Points:",)
@@ -108,17 +123,17 @@ class SegmentService(FigureService):
     def add(self):
         self.storage.insert(
             Segment(
-                Point(parse_args.a_x, parse_args.a_y),
-                Point(parse_args.b_x, parse_args.b_y)
+                Point(self.parser.a_x, self.parser.a_y),
+                Point(self.parser.b_x, self.parser.b_y)
             ).serialize()
         )
 
     def delete(self):
         self.storage.remove(
-            (Query()["a"]["x"] == parse_args.a_x) &
-            (Query()["a"]["y"] == parse_args.a_y) &
-            (Query()["b"]["x"] == parse_args.b_x) &
-            (Query()["b"]["y"] == parse_args.b_y)
+            (Query()["a"]["x"] == self.parser.a_x) &
+            (Query()["a"]["y"] == self.parser.a_y) &
+            (Query()["b"]["x"] == self.parser.b_x) &
+            (Query()["b"]["y"] == self.parser.b_y)
         )
 
     def show(self):
@@ -132,16 +147,16 @@ class CircleService(FigureService):
     def add(self):
         self.storage.insert(
             Circle(
-                Point(parse_args.center_x, parse_args.center_y),
-                parse_args.radius
+                Point(self.parser.center_x, self.parser.center_y),
+                self.parser.radius
             ).serialize()
         )
 
     def delete(self):
         self.storage.remove(
-            (Query()["center"]["x"] == parse_args.center_x) &
-            (Query()["center"]["y"] == parse_args.center_y) &
-            (Query()["radius"] == parse_args.radius)
+            (Query()["center"]["x"] ==  self.parser.center_x) &
+            (Query()["center"]["y"] ==  self.parser.center_y) &
+            (Query()["radius"] ==  self.parser.radius)
         )
 
     def show(self):
@@ -156,16 +171,18 @@ class SquareService(FigureService):
     def add(self):
         self.storage.insert(
             Square(
-                Point(parse_args.left_top_x, parse_args.left_top_y),
-                parse_args.side_length
+                Point( self.parser.left_top_x,  self.parser.left_top_y),
+                self.parser.side_length,
+                self.parser.angle
             ).serialize()
         )
 
     def delete(self):
         self.storage.remove(
-            (Query()["left_top"]["x"] == parse_args.left_top_x) &
-            (Query()["left_top"]["y"] == parse_args.left_top_y) &
-            (Query()["side_length"] == parse_args.side_length)
+            (Query()["left_top"]["x"] ==  self.parser.left_top_x) &
+            (Query()["left_top"]["y"] ==  self.parser.left_top_y) &
+            (Query()["side_length"] ==  self.parser.side_length) &
+            (Query()["angle"] ==  self.parser.angle)
         )
 
     def show(self):

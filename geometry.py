@@ -58,19 +58,22 @@ class Circle(Geometry):
 
 
 class Square(Geometry):
-    def __init__(self, left_top: Point, side_length: float):
+    def __init__(self, left_top: Point, side_length: float, angle: float):
+        assert 0 <= angle < 360
         self.left_top = left_top
         self.side_length = side_length
+        self.angle = angle
 
     def __str__(self):
-        return f"Square(left_top={self.left_top}, side_length={self.side_length})"
+        return f"Square(left_top={self.left_top}, side_length={self.side_length}, angle={self.angle})"
 
     def serialize(self):
         return {"left_top": self.left_top.serialize(),
-                "side_length": self.side_length}
+                "side_length": self.side_length,
+                "angle": self.angle}
 
     @classmethod
     def deserialize(cls, dct: dict):
         return cls(Point.deserialize(dct["left_top"]),
-                   dct["side_length"])
+                   dct["side_length"], dct["angle"])
 
